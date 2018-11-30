@@ -4,8 +4,13 @@ from kinto_http import Client
 from utils import AccountsHelper, del_none
 
 from lamberti.lamberti import Lamberti
+from rathaus import RathausBoothScraper
 
-lamberti = Lamberti()
+
+SCRAPERS = {
+    'WH1': RathausBoothScraper(),
+    'WH3': Lamberti(),
+}
 
 server_url = "http://localhost:8888/v1"
 
@@ -40,11 +45,10 @@ for booth_geometry in geojsondata["features"]:
     booth_key = booth_geometry["properties"]["SCHLUESSEL"]
     market_id = booth_geometry["properties"]["NAME"]
 
-    # lamberti
-    if market_id == "WH3":
-        print('Lamberti:')
-        booth = lamberti.fetch_booth(booth_no)
-        booth["geometry"] = geometry
-        create_booth_with_auth(booth, booth_key)
-    else:
-        print(f'Unknown market {booth_geometry["properties"]["NAME"]}')
+    scraper = SCRAPERS.get(market_id)
+    if not scraper:
+        print(f'Unknown market {market_id}')
+        continue
+    booth = scraper.fetch_booth(booth_no)
+    booth["geometry"] = geometry
+    create_booth_with_auth(booth, booth_key)
