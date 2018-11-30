@@ -80,7 +80,7 @@ class RathausBoothScraper:
     def parse_goods(self, booth_sel):
         BLACKLIST = ['mehr']
         return [
-            x.strip()
+            {'name': x.strip()}
             for x in re.split(
                 # Match ',', '&', ' und', and ' u.'
                 r'(?:[,&]|\s+u(?:nd|\.))',
