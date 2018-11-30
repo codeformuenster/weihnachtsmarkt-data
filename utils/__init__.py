@@ -1,8 +1,9 @@
 import requests
+from secrets import token_urlsafe
 
 
-def xstr(s):
-    return s if s else ''
+# def xstr(s):
+#     return s if s else ''
 
 
 def del_none(d):
@@ -18,13 +19,22 @@ def del_none(d):
             del_none(value)
 
 
-class BoothPoster:
-    def __init__(self, url, auth):
-        self.url = url
+class AccountsHelper:
+    def __init__(self, *, server_url=None, auth=None):
+        self.url = server_url
         self.auth = auth
 
-    def post(self, booth):
-        del_none(booth)
-        r = requests.post(self.url,
-                          json={'data': booth}, auth=self.auth)
-        r.raise_for_status()
+    def create_user(self, username):
+        r = requests.delete(f'{self.url}/accounts/{username}',
+                            auth=self.auth)
+        password = token_urlsafe(5)
+        r = requests.post(f'{self.url}/accounts',
+                          json={'data': {'id': username, 'password': password}},
+                          auth=self.auth)
+        try:
+            r.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            print(r.text)
+            raise e
+
+        return password
