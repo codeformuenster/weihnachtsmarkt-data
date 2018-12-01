@@ -1,0 +1,10 @@
+version: '2'
+
+services:
+  import:
+    build: .
+    command: python import.py
+    environment:
+      - KINTO_URL=https://kinto.codeformuenster.org/v1
+      - KINTO_USER=admin
+      - KINTO_PASSWORD

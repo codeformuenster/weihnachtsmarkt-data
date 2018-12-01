@@ -1,4 +1,5 @@
 import json
+import os
 from kinto_http import Client
 
 from utils import AccountsHelper, del_none
@@ -12,18 +13,19 @@ SCRAPERS = {
     'WH3': Lamberti(),
 }
 
-server_url = "http://localhost:8888/v1"
+kinto_url = os.getenv('KINTO_URL', "http://localhost:8888/v1")
+kinto_user = os.getenv('KINTO_USER', "admin")
+kinto_password = os.getenv('KINTO_PASSWORD', "SUPER-SECURE-PASSWORD")
 
-
-accounts_helper = AccountsHelper(server_url=server_url,
-                                 auth=('admin', 'SUPER-SECURE-PASSWORD'))
+accounts_helper = AccountsHelper(server_url=kinto_url,
+                                 auth=(kinto_user, kinto_password))
 
 
 def create_booth_with_auth(booth, username):
     password = accounts_helper.create_user(username)
     print(f'created user "{username}" with password "{password}"')
 
-    client = Client(server_url=server_url, auth=(username, password),
+    client = Client(server_url=kinto_url, auth=(username, password),
                     bucket="weihnachtsmarkt", collection="booths")
 
     del_none(booth)

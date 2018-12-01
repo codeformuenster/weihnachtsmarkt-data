@@ -6,13 +6,9 @@ The idea is to write a python module for each market and then just use the geojs
 
 # Usage
 
-Install dependencies:
+```bash
+cat secrets/KINTO_PASSWORD | read KINTO_PASSWORD
+export KINTO_PASSWORD="$KINTO_PASSWORD"
 
-    pip install -r requirements.txt
-
-
-Modify credentials and kinto Url in `import.py`
-
-Run it
-
-    python import.py
+sudo --preserve-env docker-compose run import python import.py
+```
